@@ -1,0 +1,26 @@
+{
+    "name" : "navatech/omnipay-byteseller",
+    "description" : "Omnipay for byteseller",
+    "type" : "library",
+    "keywords" : [
+        "omnipay",
+        "byteseller"
+    ],
+    "license" : "MIT",
+    "authors" : [
+        {
+            "name" : "Le Phuong",
+            "email" : "phuong17889@gmail.com"
+        }
+    ],
+    "require" : {
+        "ext-curl" : "*",
+        "ext-json" : "*",
+        "omnipay/common" : "^3.0"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Omnipay\\Byteseller\\" : "src/"
+        }
+    }
+}
