@@ -1,6 +1,6 @@
-Omnipay for Eshoppayment
+Omnipay for Byteseller
 ====================
-Omnipay for Eshoppayment
+Omnipay for Byteseller
 
 Installation
 ------------
@@ -10,13 +10,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist navatech/omnipay-eshoppayment "*"
+php composer.phar require --prefer-dist navatech/omnipay-byteseller "*"
 ```
 
 or add
 
 ```
-"navatech/omnipay-eshoppayment": "*"
+"navatech/omnipay-byteseller": "*"
 ```
 
 to the require section of your `composer.json` file.
@@ -27,7 +27,7 @@ Usage
 
 The following gateways are provided by this package:
 
-* Eshoppayment
+* Byteseller
 
 For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)
 repository.
@@ -38,13 +38,13 @@ repository.
 
 ```php
 use Omnipay\Common\CreditCard;
-use Omnipay\Eshoppayment\Gateway;
+use Omnipay\Byteseller\Gateway;
 use Omnipay\Omnipay;
 
 $command = Omnipay::create(Gateway::NAME);
 $command->initialize([
-    'userNo'    => '11131553',
-    'paySecret' => 'ffu6uu91888843660123x544oo6ccbwx',
+    'api_password' => '8kvmsfM92x',
+    'subseller_id' => '118567',
 ]);
 $card     = new CreditCard([
     'firstName'   => 'Alexa',

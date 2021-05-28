@@ -1,25 +1,32 @@
 <?php
 
-namespace Omnipay\Eshoppayment\Message;
+namespace Omnipay\Byteseller\Message;
 
-use Omnipay\Common\CreditCard;
+use Omnipay\Byteseller\Gateway;
 use Omnipay\Common\Message\AbstractRequest as BaseAbstractRequest;
 
 /**
  * Class AbstractRequest
- * @package Omnipay\Coinpayments\Message
+ * @package Omnipay\Byteseller\Message
  */
 abstract class AbstractRequest extends BaseAbstractRequest {
 
-	protected $liveEndpoint = "http://www.helloyoushop.com/card/doPay";
+	protected $liveEndpoint = "https://do.paymentmethodselection.com";
 
 	/**
-	 * @param CreditCard $value
+	 * @param $value
 	 *
-	 * @return AbstractRequest|BaseAbstractRequest
+	 * @return AbstractRequest
 	 */
-	public function setCard($value) {
-		return $this->setParameter('card', $value);
+	public function setApiPassword($value) {
+		return $this->setParameter('api_password', $value);
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getApiPassword() {
+		return $this->getParameter('api_password');
 	}
 
 	/**
@@ -27,73 +34,72 @@ abstract class AbstractRequest extends BaseAbstractRequest {
 	 *
 	 * @return AbstractRequest
 	 */
-	public function setEmail($value) {
-		return $this->setParameter('email', $value);
+	public function setSubsellerId($value) {
+		return $this->setParameter('subseller_id', $value);
 	}
 
 	/**
-	 * @param $value
+	 * @return mixed
+	 */
+	public function getSubsellerId() {
+		return $this->getParameter('subseller_id');
+	}
+
+	/**
+	 * @param $method
 	 *
 	 * @return AbstractRequest
 	 */
-	public function setMerOrderNo($value) {
-		return $this->setParameter('merOrderNo', $value);
+	public function setMethod($method) {
+		return $this->setParameter('method', $method);
 	}
 
 	/**
-	 * @param $value
+	 * @return mixed
+	 */
+	public function getMethod() {
+		return $this->getParameter('method');
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getApiId() {
+		return $this->getParameter('api_id');
+	}
+
+	/**
+	 * @param $api_id
 	 *
 	 * @return AbstractRequest
 	 */
-	public function setProductInfo($value) {
-		return $this->setParameter('productInfo', $value);
+	public function setApiId($api_id) {
+		return $this->setParameter('api_id', $api_id);
 	}
 
 	/**
-	 * @param $value
+	 * @return mixed
+	 */
+	public function getOrderId() {
+		return $this->getParameter('order_id');
+	}
+
+	/**
+	 * @param $order_id
 	 *
 	 * @return AbstractRequest
 	 */
-	public function setUserNo($value) {
-		return $this->setParameter('userNo', $value);
+	public function setOrderId($order_id) {
+		return $this->setParameter('order_id', $order_id);
 	}
 
 	/**
-	 * @param $value
+	 * @param $email
 	 *
 	 * @return AbstractRequest
 	 */
-	public function setIp($value) {
-		return $this->setParameter('ip', $value);
-	}
-
-	/**
-	 * @param $value
-	 *
-	 * @return AbstractRequest
-	 */
-	public function setRequestUrl($value) {
-		return $this->setParameter('requestUrl', $value);
-	}
-
-	/**
-	 * @param $value
-	 *
-	 * @return AbstractRequest
-	 */
-	public function setLanguage($value) {
-		return $this->setParameter('language', $value);
-	}
-
-	public function setPaySecret($value) {
-		return $this->setParameter('paySecret', $value);
-	}
-
-	/**
-	 * @return mixed|CreditCard
-	 */
-	public function getCard() {
-		return $this->getParameter('card');
+	public function setEmail($email) {
+		return $this->setParameter('email', $email);
 	}
 
 	/**
@@ -101,89 +107,6 @@ abstract class AbstractRequest extends BaseAbstractRequest {
 	 */
 	public function getEmail() {
 		return $this->getParameter('email');
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getLanguage() {
-		return $this->getParameter('language');
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getUserNo() {
-		return $this->getParameter('userNo');
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getMerOrderNo() {
-		return $this->getParameter('merOrderNo');
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getProductInfo() {
-		return $this->getParameter('productInfo');
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getRequestUrl() {
-		return $this->getParameter('requestUrl');
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getIp() {
-		return $this->getParameter('ip');
-	}
-
-	/**
-	 * @param array $input
-	 *
-	 * @return string
-	 */
-	protected function getSign($input) {
-		$input['paySecret'] = $this->getPaySecret();
-		$buff               = "";
-		foreach ($input as $k => $v) {
-			if ($v != "" && !is_array($v)) {
-				$buff .= $k . "=" . $v . "&";
-			}
-		}
-		$buff = trim($buff, "&");
-		return strtoupper(md5($buff));
-	}
-
-	public function getPaySecret() {
-		return $this->getParameter('paySecret');
-	}
-
-	/**
-	 * @param $data
-	 *
-	 * @return mixed
-	 */
-	protected function curlPost($data) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->getEndpoint());
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		$result = curl_exec($ch);
-		curl_close($ch);
-		return json_decode($result, 1);
 	}
 
 	/**

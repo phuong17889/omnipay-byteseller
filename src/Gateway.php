@@ -2,10 +2,11 @@
 
 namespace Omnipay\Byteseller;
 
+use Omnipay\Byteseller\Message\PurchaseRequest;
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Common\Message\NotificationInterface;
 use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Byteseller\Message\PurchaseRequest;
 
 /**
  * @method RequestInterface authorize(array $options = array())
@@ -17,6 +18,8 @@ use Omnipay\Byteseller\Message\PurchaseRequest;
  * @method RequestInterface createCard(array $options = array())
  * @method RequestInterface updateCard(array $options = array())
  * @method RequestInterface deleteCard(array $options = array())
+ * @method NotificationInterface acceptNotification(array $options = array())
+ * @method RequestInterface fetchTransaction(array $options = [])
  */
 class Gateway extends AbstractGateway {
 
@@ -34,8 +37,8 @@ class Gateway extends AbstractGateway {
 	 */
 	public function getDefaultParameters() {
 		return [
-			'userNo'    => '',
-			'paySecret' => '',
+			'api_password' => '',
+			'subseller_id' => '',
 		];
 	}
 
@@ -44,15 +47,15 @@ class Gateway extends AbstractGateway {
 	 *
 	 * @return Gateway
 	 */
-	public function setUserNo($value) {
-		return $this->setParameter('userNo', $value);
+	public function setApiPassword($value) {
+		return $this->setParameter('api_password', $value);
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public function getUserNo() {
-		return $this->getParameter('userNo');
+	public function getApiPassword() {
+		return $this->getParameter('api_password');
 	}
 
 	/**
@@ -60,23 +63,25 @@ class Gateway extends AbstractGateway {
 	 *
 	 * @return Gateway
 	 */
-	public function setPaySecret($value) {
-		return $this->setParameter('paySecret', $value);
+	public function setSubsellerId($value) {
+		return $this->setParameter('subseller_id', $value);
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public function getPaySecret() {
-		return $this->getParameter('paySecret');
+	public function getSubsellerId() {
+		return $this->getParameter('subseller_id');
 	}
 
 	/**
 	 * @param array $parameters
 	 *
-	 * @return AbstractRequest|PurchaseRequest
+	 * @return AbstractRequest
 	 */
 	public function purchase($parameters = []) {
+		$parameters['api_password'] = $this->getApiPassword();
+		$parameters['subseller_id'] = $this->getSubsellerId();
 		return $this->createRequest(PurchaseRequest::class, $parameters);
 	}
 }

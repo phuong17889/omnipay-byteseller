@@ -1,60 +1,54 @@
 <?php
 
-namespace Omnipay\Eshoppayment\Message;
+namespace Omnipay\Byteseller\Message;
+
+use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\Common\Message\ResponseInterface;
+
 /**
  * Class PurchaseRequest
- * @package Omnipay\Coinpayments\Message
+ * @package Omnipay\Byteseller\Message
  */
 class PurchaseRequest extends AbstractRequest {
 
 	/**
-	 * @return array|mixed
-	 * @throws \Omnipay\Common\Exception\InvalidRequestException
+	 * Get the raw data array for this message. The format of this varies from gateway to
+	 * gateway, but will usually be either an associative array, or a SimpleXMLElement.
+	 *
+	 * @return mixed
+	 * @throws InvalidRequestException
 	 */
 	public function getData() {
+		$this->validate('amount', 'description', 'order_id', 'currency', 'description');
 		return [
-			'address'           => $this->getCard()->getAddress1(),
-			'cardNum'           => $this->getCard()->getNumber(),
-			'city'              => $this->getCard()->getCity(),
-			'country'           => $this->getCard()->getCountry(),
-			'cvv2'              => $this->getCard()->getCvv(),
-			'firstName'         => $this->getCard()->getFirstName(),
-			'lastName'          => $this->getCard()->getLastName(),
-			'month'             => $this->getCard()->getExpiryMonth() < 10 ? '0' . $this->getCard()->getExpiryMonth() : $this->getCard()->getExpiryMonth(),
-			'phone'             => $this->getCard()->getPhone(),
-			'shippingAddress'   => $this->getCard()->getAddress1(),
-			'shippingCity'      => $this->getCard()->getCity(),
-			'shippingCountry'   => $this->getCard()->getCountry(),
-			'shippingFirstName' => $this->getCard()->getFirstName(),
-			'shippingLastName'  => $this->getCard()->getLastName(),
-			'shippingState'     => $this->getCard()->getState(),
-			'shippingTelephone' => $this->getCard()->getPhone(),
-			'shippingZipcode'   => $this->getCard()->getPostcode(),
-			'state'             => $this->getCard()->getState(),
-			'year'              => $this->getCard()->getExpiryYear(),
-			'zipCode'           => $this->getCard()->getPostcode(),
-			'currency'          => $this->getCurrency(),
-			'email'             => $this->getEmail(),
-			'language'          => $this->getLanguage(),
-			'userNo'            => $this->getUserNo(),
-			'merOrderNo'        => $this->getMerOrderNo(),
-			'orderPrice'        => $this->getAmount(),
-			'productInfo'       => $this->getProductInfo(),
-			'requestUrl'        => $this->getRequestUrl(),
-			'ip'                => $this->getIp(),
+			'api_id'       => $this->getApiId(),
+			'method'       => $this->getMethod(),
+			'subseller_id' => $this->getParameter('subseller_id'),
+			'order_id'     => $this->getOrderId(),
+			'amount'       => $this->getAmount(),
+			'currency'     => $this->getCurrency(),
+			'description'  => $this->getDescription(),
+			'email'        => $this->getEmail(),
 		];
+	}
+
+	/**
+	 * @return false|string
+	 * @throws InvalidRequestException
+	 */
+	public function getSignature() {
+		return hash('sha512', $this->getApiId() . $this->getMethod() . $this->getParameter('subseller_id') . $this->getOrderId() . $this->getAmount() . $this->getCurrency() . $this->getDescription() . $this->getEmail() . $this->getParameter('api_password'));
 	}
 
 	/**
 	 * @param mixed $data
 	 *
-	 * @return PurchaseResponse|\Omnipay\Common\Message\ResponseInterface
+	 * @return PurchaseResponse|ResponseInterface
+	 * @throws InvalidRequestException
 	 */
 	public function sendData($data) {
-		ksort($data);
-		$data         = array_filter($data);
-		$data['sign'] = $this->getSign($data);
-		$response     = $this->curlPost($data);
-		return new PurchaseResponse($this, $response);
+		$data['signature'] = $this->getSignature();
+		$data['url']       = $this->liveEndpoint . '/?' . http_build_query($data);
+		return new PurchaseResponse($this, $data);
 	}
 }
