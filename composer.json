@@ -1,5 +1,5 @@
 {
-    "name" : "phuong17889/omnipay-byteseller",
+    "name" : "phuongdev89/omnipay-byteseller",
     "description" : "Omnipay for byteseller",
     "type" : "library",
     "keywords" : [
@@ -9,8 +9,8 @@
     "license" : "MIT",
     "authors" : [
         {
-            "name" : "Le Phuong",
-            "email" : "phuong17889@gmail.com"
+            "name" : "Phuong Dev",
+            "email" : "phuongdev89@gmail.com"
         }
     ],
     "require" : {
